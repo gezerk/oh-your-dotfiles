@@ -34,13 +34,13 @@ function brew_install() {
   fi
   missing_formulas=""
   for formula in $(cat "$file"); do
-    if ! echo $brew_installed | grep -q $formula; then
+    -q | grep -q $formula; then
       missing_formulas+="$formula "
     fi
   done
   missing_formulas=$(echo "$missing_formulas" | xargs)
   if [ ! -z "$missing_formulas" ]; then
-    run "installing from $file ($(echo "$missing_formulas" | sed -e :a -e '$!N; s/\n/, /; ta'))" "eval $brew_command install $missing_formulas"
+    run "installing from $file ($(echo "$missing_formulas" | sed -e :a -e '$!N; s/\n/, /; ta'))" "eval $brew_command install $missing_formulas --force"
   fi
 }
 
@@ -84,4 +84,3 @@ function brew_taps() {
       done < $tapfile
     done
 }
-
