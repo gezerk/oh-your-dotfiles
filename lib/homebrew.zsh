@@ -27,6 +27,7 @@ function brew_install_formulas() {
 }
 
 function brew_install() {
+  force='--force'
   if [ -z "$2" ]; then
     brew_command="brew"
   else
@@ -40,7 +41,7 @@ function brew_install() {
   done
   missing_formulas=$(echo "$missing_formulas" | xargs)
   if [ ! -z "$missing_formulas" ]; then
-    run "installing from $file ($(echo "$missing_formulas" | sed -e :a -e '$!N; s/\n/, /; ta'))" "eval $brew_command install $missing_formulas --force"
+    run "installing from $file ($(echo "$missing_formulas" | sed -e :a -e '$!N; s/\n/, /; ta'))" "eval $brew_command install $missing_formulas $force"
   fi
 }
 
