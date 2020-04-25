@@ -155,10 +155,24 @@ function dotfiles_install() {
     fi
   done
 
+  force_all=true
+  for file_source in $(dotfiles_find \*.themegitrepo); do
+    file_dest="$HOME/.oh-my-zsh/custom/themes/`basename \"${file_source%.*}\"`"
+    install_file git $file_source $file_dest &
+  done
+  wait
+  force_all=false
+
   # symlinks
   for file_source in $(dotfiles_find \*.symlink); do
     file_dest="$HOME/.`basename \"${file_source%.*}\"`"
-    install_file link $file_source $file_dest
+    if [ -L $file_dest ]; then
+      if [ "$(readlink "$file_dest")" != "$file_source" ]; then
+        install_file link $file_source $file_dest
+      fi
+    else
+      install_file link $file_source $file_dest
+    fi
   done
 
   # preferences
@@ -168,7 +182,15 @@ function dotfiles_install() {
   done
 
   # fonts
-  for file_source in $(dotfiles_find \*.otf -or -name \*.ttf -or -name \*.ttc); do
+  for file_source in $(dotfiles_find \*.otf); do
+    file_dest="$HOME/Library/Fonts/$(basename $file_source)"
+    install_file copy $file_source $file_dest
+  done
+  for file_source in $(dotfiles_find \*.ttf); do
+    file_dest="$HOME/Library/Fonts/$(basename $file_source)"
+    install_file copy $file_source $file_dest
+  done
+  for file_source in $(dotfiles_find \*.ttc); do
     file_dest="$HOME/Library/Fonts/$(basename $file_source)"
     install_file copy $file_source $file_dest
   done
